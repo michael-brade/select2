@@ -262,6 +262,7 @@ define([
 
       if (container.isOpen()) {
         self.setClasses();
+		self.ensureHighlightVisible();
       }
     });
 
