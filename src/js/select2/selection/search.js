@@ -28,6 +28,7 @@ define([
 
   Search.prototype.bind = function (decorated, container, $container) {
     var self = this;
+	this.container = container;
 
     decorated.call(this, container, $container);
 
@@ -142,6 +143,7 @@ define([
           return;
         }
 
+		self.container.open();
         self.handleSearch(evt);
       }
     );
@@ -167,13 +169,14 @@ define([
     var searchHadFocus = this.$search[0] == document.activeElement;
 
     this.$search.attr('placeholder', '');
+	this.$search.val('');
 
     decorated.call(this, data);
 
     this.$selection.find('.select2-selection__rendered')
                    .append(this.$searchContainer);
 
-    this.resizeSearch();
+    this.handleSearch();
     if (searchHadFocus) {
       this.$search.focus();
     }
@@ -182,7 +185,7 @@ define([
   Search.prototype.handleSearch = function () {
     this.resizeSearch();
 
-    if (!this._keyUpPrevented) {
+    if (!this._keyUpPrevented && this.container.isOpen()) {
       var input = this.$search.val();
 
       this.trigger('query', {
